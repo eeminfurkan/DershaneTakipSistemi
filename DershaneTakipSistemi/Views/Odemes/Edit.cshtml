@@ -1,0 +1,47 @@
+﻿@model DershaneTakipSistemi.Models.Odeme
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>Odeme</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <label asp-for="Tutar" class="control-label"></label>
+                <input asp-for="Tutar" class="form-control" />
+                <span asp-validation-for="Tutar" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="OdemeTarihi" class="control-label"></label>
+                <input asp-for="OdemeTarihi" class="form-control" />
+                <span asp-validation-for="OdemeTarihi" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="OgrenciId" class="control-label">Öğrenci</label>
+                <select asp-for="OgrenciId" class="form-control" asp-items="ViewBag.OgrenciId">
+                    @* Edit sayfasında genellikle boş seçenek eklemeyiz, direkt mevcut değer seçili gelir. *@
+                    @* İstersen yine de ekleyebilirsin: <option value="">-- Öğrenci Seçiniz --</option> *@
+                </select>
+                <span asp-validation-for="OgrenciId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

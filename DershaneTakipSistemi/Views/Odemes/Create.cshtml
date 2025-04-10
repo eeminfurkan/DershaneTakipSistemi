@@ -1,0 +1,46 @@
+﻿@model DershaneTakipSistemi.Models.Odeme
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>Odeme</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Tutar" class="control-label"></label>
+                <input asp-for="Tutar" class="form-control" />
+                <span asp-validation-for="Tutar" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="OdemeTarihi" class="control-label"></label>
+                <input asp-for="OdemeTarihi" class="form-control" />
+                <span asp-validation-for="OdemeTarihi" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="OgrenciId" class="control-label">Öğrenci</label> @* <-- Label metnini düzeltebilirsin *@
+                <select asp-for="OgrenciId" class="form-control" asp-items="ViewBag.OgrenciId">
+                    @* <-- DEĞİŞİKLİK BURADA *@
+                    <option value="">-- Öğrenci Seçiniz --</option> @* <-- İsteğe bağlı: Varsayılan boş seçenek *@
+                </select>
+                <span asp-validation-for="OgrenciId" class="text-danger"></span> @* <-- Validasyon kalsın *@
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
