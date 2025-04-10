@@ -11,11 +11,13 @@ namespace DershaneTakipSistemi.Models // Namespace'in proje adınla eşleştiği
         // Hangi öğrenciye ait olduğunu belirtmek için Foreign Key:
         public int OgrenciId { get; set; }
 
+        public virtual Ogrenci Ogrenci { get; set; }
+
         // İleride eklenebilecek diğer özellikler:
         // public string Aciklama { get; set; }
         // public string OdemeTipi { get; set; } // Nakit, Kredi Kartı vb.
 
         // Navigation Property (İlişkiyi belirtmek için - İleri Seviye için):
-        // public virtual Ogrenci Ogrenci { get; set; }
+
     }
 }

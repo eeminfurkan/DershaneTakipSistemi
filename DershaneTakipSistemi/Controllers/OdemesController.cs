@@ -22,7 +22,8 @@ namespace DershaneTakipSistemi.Controllers
         // GET: Odemes
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Odemeler.ToListAsync());
+            var applicationDbContext = _context.Odemeler.Include(o => o.Ogrenci); // Include eklendi!
+            return View(await applicationDbContext.ToListAsync());
         }
 
         // GET: Odemes/Details/5
@@ -99,35 +100,35 @@ namespace DershaneTakipSistemi.Controllers
         // POST: Odemes/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: Odemes/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Tutar,OdemeTarihi,OgrenciId")] Odeme odeme)
+        public async Task<IActionResult> Edit(int id, /*[Bind("Id,Tutar,OdemeTarihi,OgrenciId")]*/ Odeme odeme)
         {
             if (id != odeme.Id)
             {
                 return NotFound();
             }
 
+            ModelState.Remove(nameof(odeme.Ogrenci));
+
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(odeme);
+                    // _context.Update(odeme); // Eski satır
+                    _context.Entry(odeme).State = EntityState.Modified; // Yeni satır
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!OdemeExists(odeme.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    if (!OdemeExists(odeme.Id)) { return NotFound(); }
+                    else { throw; }
                 }
                 return RedirectToAction(nameof(Index));
             }
+            // ModelState geçersizse dropdown'ı tekrar doldur
+            ViewData["OgrenciId"] = new SelectList(_context.Ogrenciler, "Id", "AdSoyad", odeme.OgrenciId);
             return View(odeme);
         }
 
