@@ -15,7 +15,7 @@ namespace DershaneTakipSistemi.Models // Namespace'in proje adınla eşleştiği
         // public string Aciklama { get; set; }
         // public string OdemeTipi { get; set; } // Nakit, Kredi Kartı vb.
 
-        // Navigation Property (İlişkiyi belirtmek için - İleri Seviye):
+        // Navigation Property (İlişkiyi belirtmek için - İleri Seviye için):
         // public virtual Ogrenci Ogrenci { get; set; }
     }
 }
