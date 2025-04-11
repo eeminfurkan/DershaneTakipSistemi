@@ -7,9 +7,13 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DershaneTakipSistemi.Data;
 using DershaneTakipSistemi.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DershaneTakipSistemi.Controllers
 {
+
+    [Authorize(Roles = "Admin")] // <-- BU SATIRI EKLE
+
     public class OgrencisController : Controller
     {
         private readonly ApplicationDbContext _context;
