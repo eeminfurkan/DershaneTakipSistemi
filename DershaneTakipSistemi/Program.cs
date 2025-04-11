@@ -16,7 +16,7 @@ namespace DershaneTakipSistemi
                 options.UseSqlServer(connectionString));
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-            builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount =Sfalse) // RequireConfirmedAccount'ý false yapabiliriz, þimdilik e-posta doðrulamasýyla uðraþmayalým.
+            builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount =false) // RequireConfirmedAccount'ý false yapabiliriz, þimdilik e-posta doðrulamasýyla uðraþmayalým.
                 .AddRoles<IdentityRole>() // <-- ROL YÖNETÝMÝNÝ EKLE
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
