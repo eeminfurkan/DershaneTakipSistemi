@@ -1,5 +1,6 @@
 using DershaneTakipSistemi.Data;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.EntityFrameworkCore;
 
 namespace DershaneTakipSistemi
