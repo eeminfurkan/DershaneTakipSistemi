@@ -6,10 +6,15 @@
 
 <h1>Öğrenci Detayları</h1
 <div>
-    <h4>Öğrenci Bilgileri</h4>
-
+<h4>Ödeme Bilgileri</h4>
     <hr />
     <dl class="row">
+         <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Ogrenci)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Ogrenci.AdSoyad)
+        </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Tutar)
         </dt>
@@ -22,12 +27,7 @@
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.OdemeTarihi)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.OgrenciId)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.OgrenciId)
-        </dd>
+       
     </dl>
 </div>
 <div>

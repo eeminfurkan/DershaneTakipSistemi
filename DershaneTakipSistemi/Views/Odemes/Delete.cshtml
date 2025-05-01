@@ -4,10 +4,10 @@
     ViewData["Title"] = "Delete";
 }
 
-<h1>Öğrenci Sil</h1>
-<h3>Bu öğrenciyi silmek istediğinizden emin misiniz?</h3>
+<h1>Ödeme Sil</h1>
+<h3>Bu ödemeyi silmek istediğinizden emin misiniz?</h3>
 <div>
-    <h4>Silinecek Öğrenci Bilgileri</h4>    <hr />
+    <h4>Silinecek Ödeme Bilgileri</h4>    <hr />
     <dl class="row">
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Tutar)
@@ -22,10 +22,10 @@
             @Html.DisplayFor(model => model.OdemeTarihi)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.OgrenciId)
+            @Html.DisplayNameFor(model => model.Ogrenci)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.OgrenciId)
+            @Html.DisplayFor(model => model.Ogrenci.AdSoyad)
         </dd>
     </dl>
     

@@ -34,13 +34,16 @@ namespace DershaneTakipSistemi.Controllers
         // GET: Odemes/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
+            if (id == null || _context.Odemeler == null)
             {
                 return NotFound();
             }
 
+            // .Include(o => o.Ogrenci) ekle!
             var odeme = await _context.Odemeler
+                .Include(o => o.Ogrenci)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (odeme == null)
             {
                 return NotFound();
@@ -138,15 +141,19 @@ namespace DershaneTakipSistemi.Controllers
         }
 
         // GET: Odemes/Delete/5
+        // GET: Odemes/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
+            if (id == null || _context.Odemeler == null)
             {
                 return NotFound();
             }
 
+            // .Include(o => o.Ogrenci) ekle!
             var odeme = await _context.Odemeler
+                .Include(o => o.Ogrenci)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (odeme == null)
             {
                 return NotFound();
