@@ -1,10 +1,10 @@
 ﻿@model DershaneTakipSistemi.Models.Odeme
 
 @{
-    ViewData["Title"] = "Delete";
+    ViewData["Title"] = "Ödeme Sil";
 }
 
-<h1>Ödeme Sil</h1>
+<h1>@ViewData["Title"]</h1>
 <h3>Bu ödemeyi silmek istediğinizden emin misiniz?</h3>
 <div>
     <h4>Silinecek Ödeme Bilgileri</h4>    <hr />
@@ -32,6 +32,6 @@
     <form asp-action="Delete">
         <input type="hidden" asp-for="Id" />
         <input type="submit" value="Sil" class="btn btn-danger" />
-        <a asp-action="Index">Listeye Geri Dön</a>
+        <a asp-action="Index" class="btn btn-primary">Listeye Geri Dön</a>
     </form>
 </div>

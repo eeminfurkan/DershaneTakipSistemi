@@ -1,10 +1,10 @@
 ﻿@model DershaneTakipSistemi.Models.Odeme
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Yeni Ödeme Kaydı";
 }
 
-<h1>Yeni Ödeme Kaydı</h1>
+<h1>@ViewData["Title"]</h1>
 <h4>Ödeme Bilgileri</h4>
 <hr />
 <div class="row">
@@ -37,7 +37,7 @@
 </div>
 
 <div>
-    <a asp-action="Index">Listeye Geri Dön</a>
+    <a asp-action="Index" class="btn btn-primary">Listeye Geri Dön</a>
 </div>
 
 @section Scripts {

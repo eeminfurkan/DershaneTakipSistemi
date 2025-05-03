@@ -37,14 +37,17 @@ namespace DershaneTakipSistemi.Controllers
                 return NotFound();
             }
 
+            // Öğrenciyi çekerken ilişkili Ödemeleri de getir:
             var ogrenci = await _context.Ogrenciler
+                .Include(o => o.Odemeler) // <-- İLİŞKİLİ ÖDEMELERİ GETİR
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (ogrenci == null)
             {
                 return NotFound();
             }
 
-            return View(ogrenci);
+            return View(ogrenci); // Artık 'ogrenci' nesnesi içinde Odemeler listesi de var (veya null)
         }
 
         // GET: Ogrencis/Create

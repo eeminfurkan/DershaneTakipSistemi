@@ -1,10 +1,10 @@
 ﻿@model DershaneTakipSistemi.Models.Ogrenci
 
 @{
-    ViewData["Title"] = "Delete";
+    ViewData["Title"] = "Öğrenci Sil";
 }
 
-<h1>Öğrenci Sil</h1>
+<h1>@ViewData["Title"]</h1>
 <h3>Bu öğrenciyi silmek istediğinizden emin misiniz?</h3>
 <div>
     <h4>Silinecek Öğrenci Bilgileri</h4>
@@ -33,6 +33,6 @@
     <form asp-action="Delete">
         <input type="hidden" asp-for="Id" />
         <input type="submit" value="Sil" class="btn btn-danger" />
-        <a asp-action="Index">Listeye Geri Dön</a>
+        <a asp-action="Index" class="btn btn-primary">Listeye Geri Dön</a>
     </form>
 </div>

@@ -1,4 +1,5 @@
 ﻿using System; // DateTime kullanmak için bu gerekli olabilir
+using System.Collections.Generic; // ICollection için gerekli
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema; // HasPrecision için eklemiştik, [Column] için de gerekebilir.
 namespace DershaneTakipSistemi.Models // Namespace'in proje adınla eşleştiğinden emin ol
@@ -20,6 +21,9 @@ namespace DershaneTakipSistemi.Models // Namespace'in proje adınla eşleştiği
         [DataType(DataType.Date)] // Tarih formatı
         [Required(ErrorMessage = "Kayıt Tarihi zorunludur.")] // Zorunlu yapalım
         public DateTime KayitTarihi { get; set; }
+
+        public virtual ICollection<Odeme>? Odemeler { get; set; } // Null olabilir (?)
+
 
         // İleride eklenebilecek diğer özellikler:
         // public string Telefon { get; set; }

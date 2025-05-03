@@ -55,54 +55,48 @@ namespace DershaneTakipSistemi.Controllers
         // GET: Odemes/Create
         public IActionResult Create()
         {
-            // Öğrenci listesini veritabanından çek ve bir SelectList'e dönüştür.
-            // SelectList(liste, değer_alanı_adı, gösterilecek_metin_alanı_adı)
-            ViewData["OgrenciId"] = new SelectList(_context.Ogrenciler, "Id", "AdSoyad");
-            // ViewData veya ViewBag kullanarak listeyi View'a gönderiyoruz.
-            // "OgrenciId" anahtarını kullandık, çünkü View'daki <select> elementi buna bağlanacak.
-
-            return View(); // Şimdi View'a liste gönderiliyor.
+            // ViewData["OgrenciId"] = new SelectList(_context.Ogrenciler, "Id", "AdSoyad"); // <-- ESKİ SATIRI SİL
+            OgrenciSelectListesiniYukle(); // <-- YENİ METODU ÇAĞIR (Parametresiz)
+            return View();
         }
 
         // POST: Odemes/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: Odemes/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Tutar,OdemeTarihi,OgrenciId")] Odeme odeme)
+        public async Task<IActionResult> Create(/*[Bind("Id,Tutar,OdemeTarihi,OgrenciId")]*/ Odeme odeme) // Bind'ı kaldırabiliriz
         {
+            ModelState.Remove(nameof(odeme.Ogrenci)); // <-- BU SATIRI EKLE
+
             if (ModelState.IsValid)
             {
                 _context.Add(odeme);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            // ModelState geçersizse dropdown'ı tekrar yükle!
+            OgrenciSelectListesiniYukle();
             return View(odeme);
         }
 
         // GET: Odemes/Edit/5
-        // GET: Odemes/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Odemeler == null)
+            if (id == null) // Sadece ID null mı diye kontrol etmek yeterli
             {
                 return NotFound();
             }
 
-            var odeme = await _context.Odemeler.FindAsync(id);
+            var odeme = await _context.Odemeler.FindAsync(id); // FindAsync kullanalım
             if (odeme == null)
             {
                 return NotFound();
             }
 
-            // --- YENİ EKLENEN KISIM ---
-            // Öğrenci listesini oluştur ve View'a gönder.
-            // Önemli: SelectList'in 4. parametresi olarak mevcut ödemenin OgrenciId'sini veriyoruz ki
-            // dropdown'da bu öğrenci seçili olarak gelsin.
-            ViewData["OgrenciId"] = new SelectList(_context.Ogrenciler, "Id", "AdSoyad", odeme.OgrenciId);
-            // -------------------------
-
-            return View(odeme); // odeme nesnesini View'a göndermeye devam ediyoruz.
+            OgrenciSelectListesiniYukle(odeme.OgrenciId);
+            return View(odeme);
         }
 
         // POST: Odemes/Edit/5
@@ -111,32 +105,38 @@ namespace DershaneTakipSistemi.Controllers
         // POST: Odemes/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, /*[Bind("Id,Tutar,OdemeTarihi,OgrenciId")]*/ Odeme odeme)
+        public async Task<IActionResult> Edit(int id, Odeme odeme) // Bind attribute'unu kaldırmıştık
         {
             if (id != odeme.Id)
             {
                 return NotFound();
             }
 
-            ModelState.Remove(nameof(odeme.Ogrenci));
+            ModelState.Remove(nameof(odeme.Ogrenci)); // Bu satır önemliydi
 
-            if (ModelState.IsValid)
+            if (ModelState.IsValid) // <<-- Bu blok içeriği önemli
             {
-                try
+                try // <<-- Try bloğu
                 {
-                    // _context.Update(odeme); // Eski satır
-                    _context.Entry(odeme).State = EntityState.Modified; // Yeni satır
-                    await _context.SaveChangesAsync();
+                    _context.Entry(odeme).State = EntityState.Modified; // Güncelleme yöntemi
+                    await _context.SaveChangesAsync(); // Kaydetme
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (DbUpdateConcurrencyException) // <<-- Catch bloğu
                 {
-                    if (!OdemeExists(odeme.Id)) { return NotFound(); }
-                    else { throw; }
+                    if (!OdemeExists(odeme.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index)); // <<-- Başarılı yönlendirme
             }
-            // ModelState geçersizse dropdown'ı tekrar doldur
-            ViewData["OgrenciId"] = new SelectList(_context.Ogrenciler, "Id", "AdSoyad", odeme.OgrenciId);
+
+            // ModelState geçersizse dropdown'ı tekrar yükle
+            OgrenciSelectListesiniYukle(odeme.OgrenciId);
             return View(odeme);
         }
 
@@ -180,6 +180,20 @@ namespace DershaneTakipSistemi.Controllers
         private bool OdemeExists(int id)
         {
             return _context.Odemeler.Any(e => e.Id == id);
+        }
+
+        private void OgrenciSelectListesiniYukle(object? seciliOgrenci = null)
+        {
+            // Tüm öğrencileri veritabanından çekiyoruz.
+            // .OrderBy(o => o.AdSoyad) ekleyerek listeyi isme göre sıralayabiliriz, daha kullanıcı dostu olur.
+            var ogrencilerSorgusu = _context.Ogrenciler.OrderBy(o => o.AdSoyad);
+
+            // SelectList'i oluşturuyoruz.
+            // 1. parametre: Veri kaynağı (sıralanmış öğrenci listesi)
+            // 2. parametre: Option'ların 'value' attribute'u için kullanılacak property adı (Öğrencinin Id'si)
+            // 3. parametre: Option'ların kullanıcıya görünecek metni için kullanılacak property adı (AdSoyad)
+            // 4. parametre: (Varsa) Hangi öğrencinin başlangıçta seçili olacağını belirten Id değeri.
+            ViewData["OgrenciId"] = new SelectList(ogrencilerSorgusu, "Id", "AdSoyad", seciliOgrenci);
         }
     }
 }

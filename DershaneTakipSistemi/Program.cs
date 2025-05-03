@@ -1,53 +1,76 @@
 using DershaneTakipSistemi.Data;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.EntityFrameworkCore;
+// using Microsoft.AspNetCore.Mvc.Razor; // Bu genellikle gerekmez, kaldýrýlabilir.
+using System.Threading.Tasks; // async Task Main için
+using Microsoft.Extensions.Logging; // ILogger için
+using System; // Exception için
+using System.Linq; // LINQ metotlarý için (Select vb.)
 
-namespace DershaneTakipSistemi
+
+namespace DershaneTakipSistemi // Kendi namespace'inizi kontrol edin
 {
     public class Program
     {
-        public static async Task Main(string[] args)
+        public static async Task Main(string[] args) // async Task olarak deðiþtirildi
         {
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+
+            // 1. Veritabaný Baðlantýsý ve DbContext
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(connectionString));
+
+            // Geliþtirme ortamý için veritabaný hata sayfasý
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-            builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount =false) // RequireConfirmedAccount'ý false yapabiliriz, þimdilik e-posta doðrulamasýyla uðraþmayalým.
-                .AddRoles<IdentityRole>() // <-- ROL YÖNETÝMÝNÝ EKLE
+            // 2. Identity Servisleri (Rollerle birlikte)
+            builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
+                .AddRoles<IdentityRole>() // Rol yönetimi
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
-            var app = builder.Build();
+            // 3. Repository Servisleri
+            //builder.Services.AddScoped<IOgrenciRepository, EfOgrenciRepository>(); // Öðrenci Repository Kaydý
+            // Buraya ileride IOdemeRepository vb. eklenecek
 
-            // Configure the HTTP request pipeline.
+            // 4. MVC Controller ve View Servisleri
+            builder.Services.AddControllersWithViews();
+            builder.Services.AddRazorPages(); // Identity UI için Razor Pages desteði
+
+            // --- builder.Services ile ilgili eklemeler buraya ---
+
+
+            var app = builder.Build(); // Uygulamayý oluþtur
+
+            // Configure the HTTP request pipeline (Middleware Sýrasý Önemli!).
             if (app.Environment.IsDevelopment())
             {
-                app.UseMigrationsEndPoint();
+                app.UseMigrationsEndPoint(); // Geliþtirme ortamýnda migration endpoint'i
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
+                app.UseExceptionHandler("/Home/Error"); // Hata yönetimi
+                app.UseHsts(); // HTTPS Strict Transport Security
             }
 
-            app.UseHttpsRedirection();
-            app.UseStaticFiles();
+            app.UseHttpsRedirection(); // HTTPS yönlendirmesi
+            app.UseStaticFiles(); // CSS, JS, Resim gibi statik dosyalar için
 
-            app.UseRouting();
+            app.UseRouting(); // Yönlendirme middleware'i
 
-            app.UseAuthorization();
+            app.UseAuthentication(); // Kimlik Doðrulama middleware'i (Authorization'dan önce!)
+            app.UseAuthorization(); // Yetkilendirme middleware'i
 
+            // Endpoint Mapping
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
-            app.MapRazorPages();
+            app.MapRazorPages(); // Identity UI sayfalarý için endpointler
 
-            // ===== Seed Data: Admin Rolü ve Kullanýcýsý Oluþturma =====
+            // ----- Seed Data Kodu -----
+            // (app nesnesi oluþturulduktan ve pipeline yapýlandýrýldýktan sonra, app.Run() öncesi)
             using (var scope = app.Services.CreateScope())
             {
                 var services = scope.ServiceProvider;
@@ -55,18 +78,19 @@ namespace DershaneTakipSistemi
                 {
                     var userManager = services.GetRequiredService<UserManager<IdentityUser>>();
                     var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+                    var logger = services.GetRequiredService<ILogger<Program>>(); // Logger'ý baþta alalým
 
                     // Admin rolü yoksa oluþtur
                     string adminRoleName = "Admin";
                     if (!await roleManager.RoleExistsAsync(adminRoleName))
                     {
                         await roleManager.CreateAsync(new IdentityRole(adminRoleName));
-                        Console.WriteLine($"'{adminRoleName}' rolü oluþturuldu."); // Konsola bilgi yazdýrabiliriz
+                        logger.LogInformation($"'{adminRoleName}' rolü oluþturuldu."); // Loglama kullanýmý
                     }
 
                     // Admin kullanýcýsý yoksa oluþtur ve role ata
-                    string adminEmail = "admin@dershane.com"; // Ýstediðin bir e-posta
-                    string adminPassword = "Password123!";     // Güçlü bir þifre seç!
+                    string adminEmail = "admin@dershane.com";
+                    string adminPassword = "Password123!"; // Daha güçlü bir þifre kullanýn!
 
                     var adminUser = await userManager.FindByEmailAsync(adminEmail);
                     if (adminUser == null)
@@ -75,44 +99,39 @@ namespace DershaneTakipSistemi
                         {
                             UserName = adminEmail,
                             Email = adminEmail,
-                            EmailConfirmed = true // E-posta doðrulamasý gerektirmediðimiz için true yapalým
+                            EmailConfirmed = true
                         };
                         var createUserResult = await userManager.CreateAsync(adminUser, adminPassword);
 
                         if (createUserResult.Succeeded)
                         {
-                            Console.WriteLine($"'{adminEmail}' kullanýcýsý oluþturuldu.");
-                            // Kullanýcýyý Admin rolüne ata
+                            logger.LogInformation($"'{adminEmail}' kullanýcýsý oluþturuldu.");
                             await userManager.AddToRoleAsync(adminUser, adminRoleName);
-                            Console.WriteLine($"'{adminEmail}' kullanýcýsý '{adminRoleName}' rolüne atandý.");
+                            logger.LogInformation($"'{adminEmail}' kullanýcýsý '{adminRoleName}' rolüne atandý.");
                         }
                         else
                         {
-                            // Hata durumunda loglama yapabilirsin
-                            Console.WriteLine($"'{adminEmail}' kullanýcýsý oluþturulamadý: {string.Join(", ", createUserResult.Errors.Select(e => e.Description))}");
+                            logger.LogError($"'{adminEmail}' kullanýcýsý oluþturulamadý: {string.Join(", ", createUserResult.Errors.Select(e => e.Description))}");
                         }
                     }
                     else
                     {
-                        // Kullanýcý varsa ama rolde deðilse role ata (isteðe baðlý kontrol)
                         if (!await userManager.IsInRoleAsync(adminUser, adminRoleName))
                         {
                             await userManager.AddToRoleAsync(adminUser, adminRoleName);
-                            Console.WriteLine($"Mevcut '{adminEmail}' kullanýcýsý '{adminRoleName}' rolüne atandý.");
+                            logger.LogInformation($"Mevcut '{adminEmail}' kullanýcýsý '{adminRoleName}' rolüne atandý.");
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    // Hata olursa loglama yap
                     var logger = services.GetRequiredService<ILogger<Program>>();
                     logger.LogError(ex, "Baþlangýç verisi (seed) oluþturulurken bir hata oluþtu.");
                 }
             }
-            // ============================================================
+            // --------------------------
 
-            app.Run(); // Bu satýr en sonda kalmalý
-
+            app.Run(); // Uygulamayý çalýþtýr
         }
     }
 }
