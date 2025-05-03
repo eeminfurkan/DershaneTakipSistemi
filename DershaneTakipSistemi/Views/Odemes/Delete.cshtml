@@ -24,8 +24,9 @@
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Ogrenci)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Ogrenci.AdSoyad)
+        <dd class="col-sm-10">
+            @* @Html.DisplayFor(model => model.Ogrenci.AdSoyad) // Eski hali *@
+            @Html.DisplayFor(model => model.Ogrenci.Ad) @Html.DisplayFor(model => model.Ogrenci.Soyad) @* Yeni hali *@
         </dd>
     </dl>
     

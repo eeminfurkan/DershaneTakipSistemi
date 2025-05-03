@@ -6,30 +6,58 @@ namespace DershaneTakipSistemi.Models // Namespace'in proje adınla eşleştiği
 {
     public class Ogrenci
     {
-         public int Id { get; set; }
+        public int Id { get; set; }
 
-        [Display(Name = "Adı Soyadı")]
-        // Belki Ad ve Soyad'ı ayırmak daha iyi olabilir? Şimdilik böyle kalsın.
-        [Required(ErrorMessage = "Ad Soyad alanı zorunludur.")] // Zorunlu yapalım
-        public string AdSoyad { get; set; }
+        [Required(ErrorMessage = "Ad alanı zorunludur.")]
+        [Display(Name = "Adı")]
+        [StringLength(50)]
+        public string Ad { get; set; } = string.Empty; // Null olmaması için başlangıç değeri atayalım
+
+        [Required(ErrorMessage = "Soyad alanı zorunludur.")]
+        [Display(Name = "Soyadı")]
+        [StringLength(50)]
+        public string Soyad { get; set; } = string.Empty; // Null olmaması için başlangıç değeri atayalım
 
         [Display(Name = "T.C. Kimlik No")]
-        [StringLength(11, MinimumLength = 11, ErrorMessage = "TC Kimlik No 11 haneli olmalıdır.")] // Uzunluk kontrolü
+        [StringLength(11, MinimumLength = 11, ErrorMessage = "TC Kimlik No 11 haneli olmalıdır.")]
         public string? TCKimlik { get; set; } // Null olabilir
 
+        [Display(Name = "Doğum Tarihi")]
+        [DataType(DataType.Date)]
+        public DateTime? DogumTarihi { get; set; } // Null olabilir
+
+        [Display(Name = "Cep Telefonu")]
+        [StringLength(15)]
+        public string? CepTelefonu { get; set; } // Null olabilir
+
+        [Display(Name = "E-Posta")]
+        [EmailAddress(ErrorMessage = "Geçerli bir e-posta adresi giriniz.")]
+        [StringLength(100)]
+        public string? Email { get; set; } // Null olabilir
+
         [Display(Name = "Kayıt Tarihi")]
-        [DataType(DataType.Date)] // Tarih formatı
-        [Required(ErrorMessage = "Kayıt Tarihi zorunludur.")] // Zorunlu yapalım
-        public DateTime KayitTarihi { get; set; }
+        [DataType(DataType.Date)]
+        [Required(ErrorMessage = "Kayıt Tarihi zorunludur.")]
+        public DateTime KayitTarihi { get; set; } = DateTime.Now; // Varsayılan değer
 
-        public virtual ICollection<Odeme>? Odemeler { get; set; } // Null olabilir (?)
+        [Display(Name = "Adres")]
+        [DataType(DataType.MultilineText)]
+        public string? Adres { get; set; } // Null olabilir
+
+        [Display(Name = "Aktif Mi?")]
+        public bool AktifMi { get; set; } = true; // Varsayılan değer
+
+        [Display(Name = "Notlar")]
+        [DataType(DataType.MultilineText)]
+        public string? Notlar { get; set; } // Null olabilir
 
 
-        // İleride eklenebilecek diğer özellikler:
-        // public string Telefon { get; set; }
-        // public string Email { get; set; }
-        // public DateTime DogumTarihi { get; set; }
-        // public string Adres { get; set; }
-        // public bool AktifMi { get; set; } = true; // Varsayılan olarak aktif
+        // Navigation Property (Ödemeler için)
+        public virtual ICollection<Odeme>? Odemeler { get; set; }
+
+        // AdSoyad birleşik göstermek için (Read-only property)
+        [NotMapped] // Bu alan veritabanına maplenmeyecek
+        [Display(Name = "Adı Soyadı")]
+        public string AdSoyad => $"{Ad} {Soyad}"; // Ad ve Soyad'ı birleştirir
     }
 }

@@ -5,34 +5,54 @@
 }
 
 <h1>@ViewData["Title"]</h1>
+
 <h3>Bu öğrenciyi silmek istediğinizden emin misiniz?</h3>
 <div>
     <h4>Silinecek Öğrenci Bilgileri</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.AdSoyad)
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Ad)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.AdSoyad)
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Ad)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Soyad)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Soyad)
+        </dd>
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.TCKimlik)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.TCKimlik)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.CepTelefonu)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.CepTelefonu)
+        </dd>
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.KayitTarihi)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.KayitTarihi)
         </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.AktifMi)
+        </dt>
+        <dd class="col-sm-10">
+            @(Model.AktifMi ? "Evet" : "Hayır")
+        </dd>
+        @* Diğer önemli gördüğünüz alanları buraya ekleyebilirsiniz *@
     </dl>
-    
+
     <form asp-action="Delete">
         <input type="hidden" asp-for="Id" />
-        <input type="submit" value="Sil" class="btn btn-danger" />
-        <a asp-action="Index" class="btn btn-primary">Listeye Geri Dön</a>
+        <input type="submit" value="Sil" class="btn btn-danger" /> |
+        <a asp-action="Index" class="btn btn-secondary">Listeye Geri Dön</a>
     </form>
 </div>

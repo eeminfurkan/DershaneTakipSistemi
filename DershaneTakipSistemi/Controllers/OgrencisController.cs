@@ -61,7 +61,7 @@ namespace DershaneTakipSistemi.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,AdSoyad,TCKimlik,KayitTarihi")] Ogrenci ogrenci)
+        public async Task<IActionResult> Create( Ogrenci ogrenci)
         {
             if (ModelState.IsValid)
             {
@@ -93,7 +93,7 @@ namespace DershaneTakipSistemi.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,AdSoyad,TCKimlik,KayitTarihi")] Ogrenci ogrenci)
+        public async Task<IActionResult> Edit(int id,  Ogrenci ogrenci)
         {
             if (id != ogrenci.Id)
             {

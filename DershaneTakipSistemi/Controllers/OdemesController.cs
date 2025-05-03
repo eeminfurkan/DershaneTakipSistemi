@@ -184,6 +184,24 @@ namespace DershaneTakipSistemi.Controllers
 
         private void OgrenciSelectListesiniYukle(object? seciliOgrenci = null)
         {
+            // Öğrencileri çek ve Ad+Soyad içeren yeni bir anonim tip veya ViewModel oluştur.
+            var ogrencilerListe = _context.Ogrenciler
+                                        .OrderBy(o => o.Ad) // Ada göre sırala
+                                        .ThenBy(o => o.Soyad) // Sonra Soyada göre sırala
+                                        .Select(o => new { // Anonim tip oluştur
+                                            Id = o.Id,
+                                            TamAd = o.Ad + " " + o.Soyad // Ad ve Soyad'ı birleştir
+                                        })
+                                        .ToList(); // Listeye çevir
+
+            // SelectList'i bu yeni liste üzerinden oluştur.
+            // Gösterilecek metin alanı olarak "TamAd" kullan.
+            ViewData["OgrenciId"] = new SelectList(ogrencilerListe, "Id", "TamAd", seciliOgrenci);
+        }
+
+
+        /*private void OgrenciSelectListesiniYukle(object? seciliOgrenci = null)
+        {
             // Tüm öğrencileri veritabanından çekiyoruz.
             // .OrderBy(o => o.AdSoyad) ekleyerek listeyi isme göre sıralayabiliriz, daha kullanıcı dostu olur.
             var ogrencilerSorgusu = _context.Ogrenciler.OrderBy(o => o.AdSoyad);
@@ -194,6 +212,6 @@ namespace DershaneTakipSistemi.Controllers
             // 3. parametre: Option'ların kullanıcıya görünecek metni için kullanılacak property adı (AdSoyad)
             // 4. parametre: (Varsa) Hangi öğrencinin başlangıçta seçili olacağını belirten Id değeri.
             ViewData["OgrenciId"] = new SelectList(ogrencilerSorgusu, "Id", "AdSoyad", seciliOgrenci);
-        }
+        }*/
     }
 }

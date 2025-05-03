@@ -10,12 +10,17 @@
     <h4>Öğrenci Bilgileri</h4>
     <hr />
     <dl class="row">
-        @* Mevcut öğrenci bilgileri (AdSoyad, TCKimlik, KayitTarihi) burada gösteriliyor *@
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.AdSoyad)
+            @Html.DisplayNameFor(model => model.Ad)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.AdSoyad)
+            @Html.DisplayFor(model => model.Ad)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Soyad)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Soyad)
         </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.TCKimlik)
@@ -24,49 +29,82 @@
             @Html.DisplayFor(model => model.TCKimlik)
         </dd>
         <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.DogumTarihi)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.DogumTarihi)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.CepTelefonu)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.CepTelefonu)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Email)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Email)
+        </dd>
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.KayitTarihi)
         </dt>
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.KayitTarihi)
         </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Adres)
+        </dt>
+        <dd class="col-sm-10">
+            @* Adres çok uzun olabileceği için preformatlayabiliriz *@
+            <pre style="white-space: pre-wrap; font-family: inherit;">@Html.DisplayFor(model => model.Adres)</pre>
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.AktifMi)
+        </dt>
+        <dd class="col-sm-10">
+            @(Model.AktifMi ? "Evet" : "Hayır")
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Notlar)
+        </dt>
+        <dd class="col-sm-10">
+            <pre style="white-space: pre-wrap; font-family: inherit;">@Html.DisplayFor(model => model.Notlar)</pre>
+        </dd>
     </dl>
 </div>
 
-<hr /> @* Araya bir çizgi ekleyelim *@
-
-<!-- ===== YENİ EKLENEN ÖDEME LİSTESİ BÖLÜMÜ ===== -->
+@* Mevcut Ödeme Listesi Kodu Buradaydı, aynı kalmalı *@
+<hr />
 <h4>Öğrencinin Ödemeleri</h4>
-
-@if (Model.Odemeler != null && Model.Odemeler.Any()) // Model.Odemeler null değilse VE içinde eleman varsa
+@if (Model.Odemeler != null && Model.Odemeler.Any())
 {
     <table class="table table-striped table-sm mt-3">
-        @* Daha küçük ve üstten boşluklu tablo *@
         <thead>
             <tr>
                 <th>Ödeme Tarihi</th>
                 <th>Tutar</th>
-                @* İstersen buraya başka Odeme alanları da ekleyebilirsin *@
             </tr>
         </thead>
         <tbody>
-            @foreach (var odeme in Model.Odemeler.OrderByDescending(o => o.OdemeTarihi)) // Ödemeleri tarihe göre tersten sırala
+            @foreach (var odeme in Model.Odemeler.OrderByDescending(o => o.OdemeTarihi))
             {
                 <tr>
-                    <td>@odeme.OdemeTarihi.ToShortDateString()</td> @* Tarihi kısa formatta göster *@
-                    <td>@odeme.Tutar.ToString("C")</td> @* Tutarı para birimi formatında göster (C) *@
+                    <td>@odeme.OdemeTarihi.ToShortDateString()</td>
+                    <td>@odeme.Tutar.ToString("C")</td>
                 </tr>
             }
         </tbody>
     </table>
 }
-else // Eğer hiç ödeme yoksa veya liste null ise
+else
 {
     <p>Bu öğrenciye ait kayıtlı ödeme bulunmamaktadır.</p>
 }
-<!-- =============================================== -->
 
 
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-primary">Düzenle</a> | @* Buton stili ekledim *@
-    <a asp-action="Index" class="btn btn-primary">Listeye Geri Dön</a>
+<div class="mt-4">
+    @* Butonlara üstten boşluk *@
+    <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-primary">Düzenle</a> |
+    <a asp-action="Index" class="btn btn-secondary">Listeye Geri Dön</a>
 </div>

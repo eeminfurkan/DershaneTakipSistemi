@@ -33,9 +33,11 @@
             <td>
                 @Html.DisplayFor(modelItem => item.OdemeTarihi)
             </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Ogrenci.AdSoyad)
-            </td>
+                <td>
+                    @* @Html.DisplayFor(modelItem => item.Ogrenci.AdSoyad) // Eski hali *@
+                    @Html.DisplayFor(modelItem => item.Ogrenci.Ad) @Html.DisplayFor(modelItem => item.Ogrenci.Soyad) @* Yeni hali *@
+                    @* VEYA daha kısası: @(item.Ogrenci.Ad + " " + item.Ogrenci.Soyad) *@
+                </td>
             <td>
                     <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary me-1">Düzenle</a>
                     <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-info me-1">Detaylar</a>

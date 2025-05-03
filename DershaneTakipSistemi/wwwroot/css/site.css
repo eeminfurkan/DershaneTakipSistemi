@@ -27,7 +27,7 @@ body {
     /* Mevcut stilden gelen: */
     margin-bottom: 60px; /* Footer için boþluk */
     /* Yeni eklenenler (Seçenek 2): */
-    background-image: url('/images/moroccan-flower.png'); /* Resim yolunu kontrol edin */
+    background-image: url('/images/intersection.webp'); /* Resim yolunu kontrol edin */
     background-repeat: repeat;
     background-attachment: fixed; /* Ýsteðe baðlý: Kaydýrýrken sabit kalýr */
     /* background-color: #f8f9fa; */ /* Resim yüklenemezse görünecek renk (isteðe baðlý) */
