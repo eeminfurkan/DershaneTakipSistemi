@@ -20,9 +20,11 @@ namespace DershaneTakipSistemi.Data
             base.OnModelCreating(modelBuilder); // Önce Identity yapılandırması çalışsın
 
             // Odeme entity'sindeki Tutar özelliği için hassasiyet ayarı
-            modelBuilder.Entity<Odeme>()
-                .Property(o => o.Tutar)
-                .HasPrecision(18, 2);
+            modelBuilder.Entity<Odeme>() // Odeme entity'sini yapılandır
+        .HasOne(o => o.Ogrenci) // Odeme'nin bir Ogrenci'si var
+        .WithMany(p => p.Odemeler) // Ogrenci'nin birden çok Odeme'si var (Ogrenci'deki koleksiyon)
+        .HasForeignKey(o => o.OgrenciId) // Yabancı anahtar Odeme'deki OgrenciId
+        .OnDelete(DeleteBehavior.Restrict); // <-- SİLME DAVRANIŞINI AYARLA
 
             // Başka özel yapılandırmalar gerekirse buraya eklenebilir
             // Örneğin ilişki tanımları (ileride gerekirse):

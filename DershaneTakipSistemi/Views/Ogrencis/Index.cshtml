@@ -6,9 +6,21 @@
 
 <h1>@ViewData["Title"]</h1>
 
-<p>
-    <a asp-action="Create" class="btn btn-primary mb-3">Yeni Öğrenci Ekle</a>
-</p>
+<div class="d-flex justify-content-between mb-3">
+    @* Butonları yan yana koymak için flexbox *@
+    <p>
+        <a asp-action="Create" class="btn btn-primary">Yeni Öğrenci Ekle</a>
+    </p>
+    <form asp-action="ExportToExcel" method="post">
+        @* POST isteği gönderecek form *@
+        <button type="submit" class="btn btn-success">
+            <i class="bi bi-file-earmark-excel-fill"></i> Excel'e Aktar @* Bootstrap Icons örneği *@
+        </button>
+    </form>
+</div>
+
+<table class="table table-striped table-hover table-bordered">
+    @* ... tablonun geri kalanı aynı ... *@
 <table class="table table-striped table-hover table-bordered">
     <thead>
         <tr>

@@ -6,9 +6,18 @@
 
 <h1>@ViewData["Title"]</h1>
 
+@* Hata mesajlarını göstermek için Validation Summary *@
+<div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
 <h3>Bu öğrenciyi silmek istediğinizden emin misiniz?</h3>
 <div>
     <h4>Silinecek Öğrenci Bilgileri</h4>
+    @* ... (dl listesi aynı kalır) ... *@
+
+    <form asp-action="Delete">
+        @* ... (gizli Id inputu ve butonlar aynı kalır) ... *@
+    </form>
+</div>
     <hr />
     <dl class="row">
         <dt class="col-sm-2">
