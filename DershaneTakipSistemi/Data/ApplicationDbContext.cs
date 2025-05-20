@@ -13,6 +13,8 @@ namespace DershaneTakipSistemi.Data
 
         public DbSet<Ogrenci> Ogrenciler { get; set; }
         public DbSet<Odeme> Odemeler { get; set; }
+        public DbSet<Personel> Personeller { get; set; } // <-- YENİ EKLENEN SATIR
+
 
         // ===== YENİ EKLENEN/GÜNCELLENEN METOT =====
         protected override void OnModelCreating(ModelBuilder modelBuilder)

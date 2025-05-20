@@ -8,6 +8,9 @@ using Microsoft.EntityFrameworkCore;
 using DershaneTakipSistemi.Data;
 using DershaneTakipSistemi.Models;
 using Microsoft.AspNetCore.Authorization; // <-- Bu using gerekli!
+using ClosedXML.Excel; // ClosedXML için
+using System.IO;       // MemoryStream için
+// Diğer mevcut using'ler...
 
 
 namespace DershaneTakipSistemi.Controllers
@@ -199,6 +202,72 @@ namespace DershaneTakipSistemi.Controllers
             ViewData["OgrenciId"] = new SelectList(ogrencilerListe, "Id", "TamAd", seciliOgrenci);
         }
 
+        // ... Index, Details, Create, Edit, Delete metotları ...
+
+        // ===== YENİ EKLENEN ÖDEME EXCEL EXPORT ACTION =====
+        [HttpPost]
+        public async Task<IActionResult> ExportOdemelerToExcel()
+        {
+            // 1. Veriyi Çekme (Öğrenci bilgisiyle birlikte ve sıralı)
+            var odemeler = await _context.Odemeler
+                                        .Include(o => o.Ogrenci) // İlişkili öğrenciyi getir
+                                        .OrderByDescending(o => o.OdemeTarihi) // Ödeme tarihine göre tersten sırala
+                                        .ToListAsync();
+
+            // 2. Excel Dosyası Oluşturma
+            using (var workbook = new XLWorkbook())
+            {
+                var worksheet = workbook.Worksheets.Add("Ödemeler"); // "Ödemeler" adında bir sayfa
+
+                // 3. Başlık Satırını Oluşturma
+                int currentRow = 1;
+                worksheet.Cell(currentRow, 1).Value = "Ödeme ID";
+                worksheet.Cell(currentRow, 2).Value = "Öğrenci Adı Soyadı";
+                worksheet.Cell(currentRow, 3).Value = "Ödeme Tarihi";
+                worksheet.Cell(currentRow, 4).Value = "Tutar";
+                // İsterseniz Açıklama, Ödeme Tipi gibi alanları da ekleyebilirsiniz
+
+                // Başlık satırını biçimlendirme (Opsiyonel)
+                var headerRange = worksheet.Range($"A{currentRow}:D{currentRow}"); // Sütun sayısına göre ayarlayın
+                headerRange.Style.Font.Bold = true;
+                headerRange.Style.Fill.BackgroundColor = XLColor.LightSkyBlue; // Farklı bir renk
+                headerRange.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+
+                // 4. Veri Satırlarını Ekleme
+                foreach (var odeme in odemeler)
+                {
+                    currentRow++;
+                    worksheet.Cell(currentRow, 1).Value = odeme.Id;
+                    // Öğrenci null değilse adını soyadını yaz, null ise boş bırak (güvenlik önlemi)
+                    worksheet.Cell(currentRow, 2).Value = odeme.Ogrenci != null ? $"{odeme.Ogrenci.Ad} {odeme.Ogrenci.Soyad}" : "Bilinmiyor";
+                    worksheet.Cell(currentRow, 3).Value = odeme.OdemeTarihi.ToString("dd.MM.yyyy");
+                    worksheet.Cell(currentRow, 4).Value = odeme.Tutar; // ClosedXML sayıyı otomatik formatlayabilir
+                                                                       // Para birimi formatı için: worksheet.Cell(currentRow, 4).Value = odeme.Tutar;
+                                                                       // worksheet.Cell(currentRow, 4).Style.NumberFormat.Format = "#,##0.00 ₺"; // Örnek format
+                }
+
+                // Sütun genişliklerini ayarlama (Opsiyonel)
+                worksheet.Column(1).Width = 10; // Ödeme ID
+                worksheet.Column(2).Width = 30; // Öğrenci Adı Soyadı
+                worksheet.Column(3).Width = 15; // Ödeme Tarihi
+                worksheet.Column(4).Width = 15; // Tutar
+                                                // veya worksheet.Columns().AdjustToContents();
+
+                // 5. Dosyayı MemoryStream'e Kaydetme
+                using (var stream = new MemoryStream())
+                {
+                    workbook.SaveAs(stream);
+                    var content = stream.ToArray();
+
+                    // 6. Dosyayı Tarayıcıya Gönderme
+                    string contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                    string fileName = $"Odemeler_{DateTime.Now:yyyyMMddHHmmss}.xlsx";
+
+                    return File(content, contentType, fileName);
+                }
+            }
+        }
+        // =================================================
 
         /*private void OgrenciSelectListesiniYukle(object? seciliOgrenci = null)
         {
