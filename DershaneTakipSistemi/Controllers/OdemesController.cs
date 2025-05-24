@@ -202,8 +202,7 @@ namespace DershaneTakipSistemi.Controllers
             ViewData["OgrenciId"] = new SelectList(ogrencilerListe, "Id", "TamAd", seciliOgrenci);
         }
 
-        // ... Index, Details, Create, Edit, Delete metotları ...
-
+        //GET: Odemes/ExportToExcel
         // ===== YENİ EKLENEN ÖDEME EXCEL EXPORT ACTION =====
         [HttpPost]
         public async Task<IActionResult> ExportOdemelerToExcel()

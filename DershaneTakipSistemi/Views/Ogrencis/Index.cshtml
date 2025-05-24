@@ -6,6 +6,21 @@
 
 <h1>@ViewData["Title"]</h1>
 
+@* Arama Formu *@
+<form asp-action="Index" method="get" class="mb-3">
+    @* GET metodu ile arama yapalım *@
+    <div class="input-group">
+        <input type="text" name="aramaMetni" class="form-control" placeholder="Ad veya Soyada göre ara..." value="@ViewData["GecerliArama"]" />
+        <button type="submit" class="btn btn-info">
+            <i class="bi bi-search"></i> Ara
+        </button>
+        <a asp-action="Index" class="btn btn-secondary ms-2">
+            <i class="bi bi-x-lg"></i> Temizle @* Temizle butonu *@
+        </a>
+    </div>
+</form>
+
+
 <div class="d-flex justify-content-between mb-3">
     @* Butonları yan yana koymak için flexbox *@
     <p>

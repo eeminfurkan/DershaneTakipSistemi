@@ -27,9 +27,39 @@ namespace DershaneTakipSistemi.Controllers
         }
 
         // GET: Ogrencis
-        public async Task<IActionResult> Index()
+        // Arama parametresi eklendi: string aramaMetni
+        public async Task<IActionResult> Index(string aramaMetni)
         {
-            return View(await _context.Ogrenciler.ToListAsync());
+            // ViewData'ya mevcut arama metnini aktaralım ki View'da gösterilebilsin.
+            ViewData["GecerliArama"] = aramaMetni;
+
+            // Başlangıçta tüm öğrencileri seçelim.
+            // IQueryable<Ogrenci> sorgusu oluşturuyoruz ki veritabanına sadece
+            // en son filtrelenmiş sorgu gitsin.
+            var ogrencilerSorgusu = from o in _context.Ogrenciler select o;
+            // veya: var ogrencilerSorgusu = _context.Ogrenciler.AsQueryable();
+
+            // Eğer aramaMetni boş değilse, filtreleme yap.
+            if (!String.IsNullOrEmpty(aramaMetni))
+            {
+                // Ad veya Soyad alanında aramaMetni'ni içeren öğrencileri bul.
+                // Büyük/küçük harf duyarsız arama için ToLower() kullanıyoruz.
+                // EF Core 6+ string.Contains'i SQL LIKE '%...%' sorgusuna çevirir.
+                ogrencilerSorgusu = ogrencilerSorgusu.Where(o =>
+                    (o.Ad != null && o.Ad.ToLower().Contains(aramaMetni.ToLower())) ||
+                    (o.Soyad != null && o.Soyad.ToLower().Contains(aramaMetni.ToLower()))
+                // İstersen TCKimlik veya diğer alanları da ekleyebilirsin:
+                // || (o.TCKimlik != null && o.TCKimlik.Contains(aramaMetni))
+                );
+            }
+            // Son olarak, filtrelenmiş (veya filtrelenmemiş) sorguyu sıralayıp
+            // veritabanından çekip View'a gönderelim.
+            var filtrelenmisOgrenciler = await ogrencilerSorgusu
+                                                .OrderBy(o => o.Ad)
+                                                .ThenBy(o => o.Soyad)
+                                                .ToListAsync();
+
+            return View(filtrelenmisOgrenciler);
         }
 
         // GET: Ogrencis/Details/5
@@ -190,8 +220,7 @@ namespace DershaneTakipSistemi.Controllers
             return _context.Ogrenciler.Any(e => e.Id == id);
         }
 
-        // ... Index, Details, Create, Edit, Delete metotları ...
-
+        //GET: Ogrencis/ExportToExcel
         // ===== YENİ EKLENEN EXCEL EXPORT ACTION =====
         [HttpPost] // Genellikle bu tür işlemler için POST kullanılır (GET de olabilir ama POST daha uygun)
         public async Task<IActionResult> ExportToExcel()
