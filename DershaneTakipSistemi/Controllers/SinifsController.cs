@@ -148,13 +148,33 @@ namespace DershaneTakipSistemi.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var sinif = await _context.Siniflar.FindAsync(id);
-            if (sinif != null)
+            if (sinif == null)
             {
-                _context.Siniflar.Remove(sinif);
+                return NotFound();
             }
 
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            try
+            {
+                _context.Siniflar.Remove(sinif);
+                await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Sınıf başarıyla silindi.";
+                return RedirectToAction(nameof(Index));
+            }
+            catch (DbUpdateException /* ex */) // Exception detayını şimdilik kullanmıyoruz
+            {
+                // Hatanın nedenini bilerek daha spesifik bir mesaj veriyoruz.
+                ModelState.AddModelError(string.Empty, "Bu sınıf silinemedi. Sınıfa kayıtlı öğrenciler olabilir. Lütfen önce bu sınıftaki öğrencileri başka bir sınıfa atayın veya öğrencilerin sınıf atamasını kaldırın.");
+                // Silme başarısız olduğu için Delete onay sayfasını tekrar gösterelim.
+                // Eğer sınıf detaylarını da göstermek isterseniz, 'sinif' nesnesini
+                // ilişkili öğrencileriyle (.Include) tekrar çekmeniz gerekebilir.
+                // Şimdilik sadece 'sinif' nesnesini gönderelim.
+                return View("Delete", sinif);
+            }
+            catch (Exception /* ex */) // Beklenmedik diğer hatalar
+            {
+                ModelState.AddModelError(string.Empty, "Bir hata oluştu. Kayıt silinemedi.");
+                return View("Delete", sinif);
+            }
         }
 
         private bool SinifExists(int id)
