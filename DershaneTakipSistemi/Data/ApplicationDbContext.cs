@@ -14,6 +14,8 @@ namespace DershaneTakipSistemi.Data
         public DbSet<Ogrenci> Ogrenciler { get; set; }
         public DbSet<Odeme> Odemeler { get; set; }
         public DbSet<Personel> Personeller { get; set; } // <-- YENİ EKLENEN SATIR
+        public DbSet<Sinif> Siniflar { get; set; } // <-- YENİ SATIR
+
 
 
         // ===== YENİ EKLENEN/GÜNCELLENEN METOT =====

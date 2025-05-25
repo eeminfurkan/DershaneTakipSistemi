@@ -26,6 +26,14 @@ namespace DershaneTakipSistemi.Controllers
             _context = context;
         }
 
+        // ===== YENİ YARDIMCI METOT =====
+        private void SinifSelectListesiniYukle(object? seciliSinif = null)
+        {
+            var siniflarSorgusu = _context.Siniflar.OrderBy(s => s.Ad);
+            ViewData["SinifId"] = new SelectList(siniflarSorgusu, "Id", "Ad", seciliSinif);
+        }
+        // =============================
+
         // GET: Ogrencis
         // Arama parametresi eklendi: string aramaMetni
         public async Task<IActionResult> Index(string aramaMetni)
@@ -36,7 +44,9 @@ namespace DershaneTakipSistemi.Controllers
             // Başlangıçta tüm öğrencileri seçelim.
             // IQueryable<Ogrenci> sorgusu oluşturuyoruz ki veritabanına sadece
             // en son filtrelenmiş sorgu gitsin.
-            var ogrencilerSorgusu = from o in _context.Ogrenciler select o;
+            var ogrencilerSorgusu = _context.Ogrenciler
+                               .Include(o => o.Sinifi) // <-- Sınıf bilgisini de çek
+                               .AsQueryable(); // .AsQueryable() burada opsiyonel ama iyi bir alışkanlık
             // veya: var ogrencilerSorgusu = _context.Ogrenciler.AsQueryable();
 
             // Eğer aramaMetni boş değilse, filtreleme yap.
@@ -72,8 +82,9 @@ namespace DershaneTakipSistemi.Controllers
 
             // Öğrenciyi çekerken ilişkili Ödemeleri de getir:
             var ogrenci = await _context.Ogrenciler
-                .Include(o => o.Odemeler) // <-- İLİŞKİLİ ÖDEMELERİ GETİR
-                .FirstOrDefaultAsync(m => m.Id == id);
+       .Include(o => o.Odemeler)  // Bu zaten vardı (Ödemeler için)
+       .Include(o => o.Sinifi)    // <-- Sınıf bilgisini de çek
+       .FirstOrDefaultAsync(m => m.Id == id);
 
             if (ogrenci == null)
             {
@@ -86,6 +97,7 @@ namespace DershaneTakipSistemi.Controllers
         // GET: Ogrencis/Create
         public IActionResult Create()
         {
+            SinifSelectListesiniYukle(); // <-- Eklendi
             return View();
         }
 
@@ -102,6 +114,7 @@ namespace DershaneTakipSistemi.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            SinifSelectListesiniYukle(ogrenci.SinifId); // <-- Eklendi (ModelState geçersizse)
             return View(ogrenci);
         }
 
@@ -118,6 +131,7 @@ namespace DershaneTakipSistemi.Controllers
             {
                 return NotFound();
             }
+            SinifSelectListesiniYukle(ogrenci.SinifId); // <-- Eklendi (mevcut sınıfı seçili getirmek için)
             return View(ogrenci);
         }
 
@@ -132,6 +146,9 @@ namespace DershaneTakipSistemi.Controllers
             {
                 return NotFound();
             }
+
+            ModelState.Remove(nameof(ogrenci.Sinifi)); // Navigation property için
+            ModelState.Remove(nameof(ogrenci.Odemeler)); // Diğer navigation property için
 
             if (ModelState.IsValid)
             {
@@ -153,6 +170,8 @@ namespace DershaneTakipSistemi.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            SinifSelectListesiniYukle(ogrenci.SinifId); // <-- Eklendi (ModelState geçersizse)
+
             return View(ogrenci);
         }
 

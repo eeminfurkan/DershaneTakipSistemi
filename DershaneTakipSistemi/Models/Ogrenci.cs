@@ -52,6 +52,16 @@ namespace DershaneTakipSistemi.Models // Namespace'in proje adınla eşleştiği
         public string? Notlar { get; set; } // Null olabilir
 
 
+        // ===== YENİ EKLENEN İLİŞKİ ALANLARI =====
+        [Display(Name = "Sınıfı")]
+        public int? SinifId { get; set; } // Foreign Key (Sınıfa atanmamış olabilir diye Nullable ?)
+
+        [ForeignKey("SinifId")] // Bu property'nin SinifId Foreign Key'i ile ilişkili olduğunu belirtir
+        [Display(Name = "Sınıfı")] // <-- YENİ EKLENEN ATTRIBUTE
+
+        public virtual Sinif? Sinifi { get; set; } // Navigation Property (Sınıfa atanmamış olabilir diye Nullable ?)
+        // ========================================
+
         // Navigation Property (Ödemeler için)
         public virtual ICollection<Odeme>? Odemeler { get; set; }
 

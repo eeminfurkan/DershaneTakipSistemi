@@ -4,6 +4,7 @@ using DershaneTakipSistemi.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DershaneTakipSistemi.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250524013850_AddSinifTable")]
+    partial class AddSinifTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -82,9 +85,6 @@ namespace DershaneTakipSistemi.Data.Migrations
                     b.Property<string>("Notlar")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("SinifId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Soyad")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -95,8 +95,6 @@ namespace DershaneTakipSistemi.Data.Migrations
                         .HasColumnType("nvarchar(11)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("SinifId");
 
                     b.ToTable("Ogrenciler");
                 });
@@ -383,15 +381,6 @@ namespace DershaneTakipSistemi.Data.Migrations
                     b.Navigation("Ogrenci");
                 });
 
-            modelBuilder.Entity("DershaneTakipSistemi.Models.Ogrenci", b =>
-                {
-                    b.HasOne("DershaneTakipSistemi.Models.Sinif", "Sinifi")
-                        .WithMany("Ogrenciler")
-                        .HasForeignKey("SinifId");
-
-                    b.Navigation("Sinifi");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -446,11 +435,6 @@ namespace DershaneTakipSistemi.Data.Migrations
             modelBuilder.Entity("DershaneTakipSistemi.Models.Ogrenci", b =>
                 {
                     b.Navigation("Odemeler");
-                });
-
-            modelBuilder.Entity("DershaneTakipSistemi.Models.Sinif", b =>
-                {
-                    b.Navigation("Ogrenciler");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,0 +1,70 @@
+﻿@model IEnumerable<DershaneTakipSistemi.Models.Sinif>
+
+@{
+    ViewData["Title"] = "Sınıflar";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<form asp-action="Index" method="get" class="mb-3">
+    <div class="input-group">
+        <input type="text" name="aramaMetni" class="form-control" placeholder="Sınıf adına göre ara..." value="@ViewData["GecerliArama"]" />
+        <button type="submit" class="btn btn-info">
+            <i class="bi bi-search"></i> Ara
+        </button>
+        <a asp-action="Index" class="btn btn-secondary ms-2">
+            <i class="bi bi-x-lg"></i> Temizle
+        </a>
+    </div>
+</form>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Yeni Sınıf Ekle</a>
+</p>
+
+<table class="table table-striped table-hover table-bordered">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => new DershaneTakipSistemi.Models.Sinif().Ad)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => new DershaneTakipSistemi.Models.Sinif().Aciklama)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => new DershaneTakipSistemi.Models.Sinif().Kapasite)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Any())
+        {
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Ad)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Aciklama)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Kapasite)
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning me-1"><i class="bi bi-pencil-square"></i> Düzenle</a>
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info me-1"><i class="bi bi-info-circle"></i> Detaylar</a>
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger"><i class="bi bi-trash"></i> Sil</a>
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="4" class="text-center">Kayıt bulunamadı.</td>
+            </tr>
+        }
+    </tbody>
+</table>

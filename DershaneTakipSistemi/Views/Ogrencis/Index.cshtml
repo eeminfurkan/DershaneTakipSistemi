@@ -38,19 +38,22 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.FirstOrDefault().AdSoyad) <!-- Birleşik AdSoyad -->
+                @Html.DisplayNameFor(model => model.AdSoyad) <!-- Birleşik AdSoyad -->
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.FirstOrDefault().TCKimlik)
+                @Html.DisplayNameFor(model => model.TCKimlik)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.FirstOrDefault().CepTelefonu)
+                @Html.DisplayNameFor(model => model.CepTelefonu)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.FirstOrDefault().KayitTarihi)
+                @Html.DisplayNameFor(model => model.Sinifi) @* Yeni Başlık *@
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.FirstOrDefault().AktifMi)
+                @Html.DisplayNameFor(model => model.KayitTarihi)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.AktifMi)
             </th>
             <th>İşlemler</th>
         </tr>
@@ -67,6 +70,11 @@
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.CepTelefonu)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Sinifi.Ad) @* Sınıfın Adını gösteriyoruz *@
+                    @* Eğer bir öğrencinin sınıfı null ise, item.Sinifi null olacağı için hata almamak adına
+                   şöyle bir kontrol eklenebilir: @(item.Sinifi != null ? item.Sinifi.Ad : "Atanmamış") *@
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.KayitTarihi)

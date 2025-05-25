@@ -1,0 +1,73 @@
+﻿@model DershaneTakipSistemi.Models.Sinif
+
+@{
+    ViewData["Title"] = "Sınıf Detayları";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<div>
+    <h4>Sınıf Bilgileri</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Ad)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Ad)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Aciklama)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Aciklama)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Kapasite)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Kapasite)
+        </dd>
+    </dl>
+</div>
+
+<hr />
+
+<h4>Bu Sınıftaki Öğrenciler</h4>
+
+@if (Model.Ogrenciler != null && Model.Ogrenciler.Any())
+{
+    <table class="table table-sm mt-3">
+        @* table-sm daha kompakt yapar *@
+        <thead>
+            <tr>
+                <th>Adı Soyadı</th>
+                <th>T.C. Kimlik No</th>
+                <th>Kayıt Tarihi</th>
+                <th>İşlemler</th> @* Öğrenci detayına gitme linki *@
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var ogrenci in Model.Ogrenciler.OrderBy(o => o.Ad).ThenBy(o => o.Soyad))
+            {
+                <tr>
+                    <td>@ogrenci.AdSoyad</td>
+                    <td>@ogrenci.TCKimlik</td>
+                    <td>@ogrenci.KayitTarihi.ToShortDateString()</td>
+                    <td>
+                        <a asp-controller="Ogrencis" asp-action="Details" asp-route-id="@ogrenci.Id" class="btn btn-sm btn-outline-info">Detay</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>Bu sınıfa kayıtlı öğrenci bulunmamaktadır.</p>
+}
+
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-warning">Düzenle</a> |
+    <a asp-action="Index" class="btn btn-secondary ms-2">Listeye Geri Dön</a>
+</div>
