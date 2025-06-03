@@ -62,6 +62,45 @@
         </dd>
     </dl>
 </div>
+
+<hr /> @* Araya bir çizgi ekleyelim *@
+
+<!-- ===== YENİ EKLENEN SORUMLU OLDUĞU SINIFLAR BÖLÜMÜ ===== -->
+<h4>Sorumlu Olduğu Sınıflar</h4>
+
+@if (Model.SorumluOlduguSiniflar != null && Model.SorumluOlduguSiniflar.Any())
+{
+    <table class="table table-striped table-sm mt-3">
+        <thead>
+            <tr>
+                <th>Sınıf Adı</th>
+                <th>Açıklama</th>
+                <th>Kapasite</th>
+                <th>İşlemler</th> @* Sınıf detayına gitme linki *@
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var sinif in Model.SorumluOlduguSiniflar.OrderBy(s => s.Ad))
+            {
+                <tr>
+                    <td>@sinif.Ad</td>
+                    <td>@sinif.Aciklama</td>
+                    <td>@sinif.Kapasite</td>
+                    <td>
+                        <a asp-controller="Sinifs" asp-action="Details" asp-route-id="@sinif.Id" class="btn btn-sm btn-outline-info">Detay</a>
+                        @* Eğer Controller adınız SinifsController ise asp-controller="Sinifs" yapın *@
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>Bu personelin sorumlu olduğu sınıf bulunmamaktadır.</p>
+}
+<!-- ====================================================== -->
+
 <div class="mt-4">
     <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-primary">Düzenle</a> |
     <a asp-action="Index" class="btn btn-secondary">Listeye Geri Dön</a>

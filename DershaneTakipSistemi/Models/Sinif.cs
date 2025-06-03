@@ -1,5 +1,8 @@
-﻿using System.Collections.Generic; // ICollection için (ileride öğrenciler için)
+﻿using System;
+using System.Collections.Generic; // ICollection için (ileride öğrenciler için)
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema; // ForeignKey için
+
 
 namespace DershaneTakipSistemi.Models
 {
@@ -20,10 +23,17 @@ namespace DershaneTakipSistemi.Models
         [Range(1, 200, ErrorMessage = "Kapasite 1 ile 200 arasında olmalıdır.")] // Örnek bir aralık
         public int? Kapasite { get; set; } // Null olabilir
 
-        // ===== YENİ EKLENEN İLİŞKİ ALANI =====
-        // Bu sınıftaki öğrencilerin listesi
-        public virtual ICollection<Ogrenci>? Ogrenciler { get; set; } // Nullable ? koleksiyon
-        // =====================================
+       // ===== YENİ EKLENEN ÖĞRETMEN İLİŞKİ ALANLARI =====
+        [Display(Name = "Sınıf Öğretmeni")]
+        public int? OgretmenPersonelId { get; set; } // Foreign Key (Personel tablosuna) - Nullable
+
+        [Display(Name = "Sınıf Öğretmeni")]
+
+        [ForeignKey("OgretmenPersonelId")]
+        public virtual Personel? SorumluOgretmen { get; set; } // Navigation Property - Nullable
+        // =============================================
+
+        public virtual ICollection<Ogrenci>? Ogrenciler { get; set; }
 
         // İleride bu sınıftaki öğrencileri listelemek için (şimdilik yoruma alalım veya ekleyebiliriz)
         // public virtual ICollection<Ogrenci>? Ogrenciler { get; set; }

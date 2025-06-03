@@ -43,6 +43,8 @@ namespace DershaneTakipSistemi.Models
         [Display(Name = "Aktif Mi?")]
         public bool AktifMi { get; set; } = true; // Varsayılan olarak aktif
 
+        public virtual ICollection<Sinif>? SorumluOlduguSiniflar { get; set; } // Navigation Property
+
         // AdSoyad birleşik göstermek için (Read-only property)
         [NotMapped] // Bu alan veritabanına maplenmeyecek
         [Display(Name = "Adı Soyadı")]

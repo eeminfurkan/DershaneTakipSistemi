@@ -28,6 +28,12 @@
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Kapasite)
         </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.SorumluOgretmen) @* Yeni Alan *@
+        </dt>
+        <dd class="col-sm-10">
+            @(Model.SorumluOgretmen != null ? Model.SorumluOgretmen.AdSoyad : "Atanmamış") @* Yeni Alan *@
+        </dd>
     </dl>
 </div>
 
@@ -68,6 +74,6 @@ else
 }
 
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-warning">Düzenle</a> |
+    <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-primary">Düzenle</a> |
     <a asp-action="Index" class="btn btn-secondary ms-2">Listeye Geri Dön</a>
 </div>

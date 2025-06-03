@@ -59,6 +59,7 @@ namespace DershaneTakipSistemi.Controllers
             }
 
             var personel = await _context.Personeller
+                 .Include(p => p.SorumluOlduguSiniflar) // <-- SORUMLU OLDUĞU SINIFLARI GETİR
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (personel == null)
             {

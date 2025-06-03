@@ -10,6 +10,7 @@ using DershaneTakipSistemi.Models;
 using Microsoft.AspNetCore.Authorization;
 using ClosedXML.Excel; // ClosedXML için using eklendi
 using System.IO; // MemoryStream için using eklendi
+using Microsoft.AspNetCore.Mvc.Rendering; // SelectList için
 // Diğer using'ler (System, Linq, Task, Mvc, DbContext, Models, Authorization) zaten olmalı
 
 
@@ -26,10 +27,29 @@ namespace DershaneTakipSistemi.Controllers
             _context = context;
         }
 
+        // ===== YENİ YARDIMCI METOT (Personel/Öğretmenler için) =====
+        private void PersonelSelectListesiniYukle(object? seciliOgretmen = null)
+        {
+            // Sadece belirli bir göreve sahip personelleri öğretmen olarak listeleyebiliriz
+            // Veya tüm personelleri listeleyebiliriz. Şimdilik tümünü listeleyelim.
+            // İleride Personel modeline "Rol" veya "Pozisyon" alanı eklenirse filtreleme yapılabilir.
+            var personellerSorgusu = _context.Personeller
+                                        .OrderBy(p => p.Ad)
+                                        .ThenBy(p => p.Soyad)
+                                        .Select(p => new { // AdSoyad'ı birleştirelim
+                                            Id = p.Id,
+                                            TamAd = p.Ad + " " + p.Soyad
+                                        });
+            ViewData["OgretmenPersonelId"] = new SelectList(personellerSorgusu, "Id", "TamAd", seciliOgretmen);
+        }
+
         // GET: Sinifs
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Siniflar.ToListAsync());
+            var siniflar = _context.Siniflar
+                                       .Include(s => s.SorumluOgretmen) // <-- Sorumlu Öğretmen bilgisini de çek
+                                       .OrderBy(s => s.Ad);
+            return View(await siniflar.ToListAsync());
         }
 
         // GET: Sinifs/Details/5
@@ -42,6 +62,7 @@ namespace DershaneTakipSistemi.Controllers
 
             var sinif = await _context.Siniflar
        .Include(s => s.Ogrenciler) // <-- BU SINIFTAKİ ÖĞRENCİLERİ GETİR
+       .Include(s => s.SorumluOgretmen) // <-- Sorumlu Öğretmen bilgisini de çek
        .FirstOrDefaultAsync(m => m.Id == id);
             if (sinif == null)
             {
@@ -54,6 +75,8 @@ namespace DershaneTakipSistemi.Controllers
         // GET: Sinifs/Create
         public IActionResult Create()
         {
+            PersonelSelectListesiniYukle(); // <-- Eklendi
+
             return View();
         }
 
@@ -62,30 +85,38 @@ namespace DershaneTakipSistemi.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Ad,Aciklama,Kapasite")] Sinif sinif)
+        public async Task<IActionResult> Create(Sinif sinif) // [Bind] attribute'unu kaldırdık veya OgretmenPersonelId'yi eklemeliyiz
         {
+            ModelState.Remove(nameof(sinif.SorumluOgretmen)); // Navigation property için
+            ModelState.Remove(nameof(sinif.Ogrenciler));     // Diğer navigation property için
+
             if (ModelState.IsValid)
             {
                 _context.Add(sinif);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            PersonelSelectListesiniYukle(sinif.OgretmenPersonelId); // <-- Eklendi
+
             return View(sinif);
         }
 
         // GET: Sinifs/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
+                var sinif = await _context.Siniflar.FindAsync(id);
+
             if (id == null)
             {
                 return NotFound();
             }
 
-            var sinif = await _context.Siniflar.FindAsync(id);
             if (sinif == null)
             {
                 return NotFound();
             }
+            PersonelSelectListesiniYukle(sinif.OgretmenPersonelId); // <-- Eklendi
+
             return View(sinif);
         }
 
@@ -100,6 +131,8 @@ namespace DershaneTakipSistemi.Controllers
             {
                 return NotFound();
             }
+            ModelState.Remove(nameof(sinif.SorumluOgretmen));
+            ModelState.Remove(nameof(sinif.Ogrenciler));
 
             if (ModelState.IsValid)
             {
@@ -121,6 +154,8 @@ namespace DershaneTakipSistemi.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            PersonelSelectListesiniYukle(sinif.OgretmenPersonelId); // <-- Eklendi
+
             return View(sinif);
         }
 
